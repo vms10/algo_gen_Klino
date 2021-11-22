@@ -101,7 +101,8 @@ double EvaluationFunction(TVector<double> &v, RandomState &rs)
 				}
 
 				totaldist = (accdist/(RunDuration/StepSize));
-				fA = (MaxDist - totaldist)/MaxDist;
+				//fA = (MaxDist - totaldist)/MaxDist;
+				fA = totaldist;
 				fA = fA < 0 ? 0.0 : fA;
 				fitness += fA;
 			}
