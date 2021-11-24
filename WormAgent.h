@@ -10,10 +10,10 @@
 #include "CTRNN.h"
 
 
-//#define GRAD_CONE
+#define GRAD_CONE
 //#define GRAD_INVCONE
 //#define GRAD_ISO
-#define GRAD_GAUS				
+//#define GRAD_GAUS				
 
 // Global constants
 const double	StepSize		=	0.01;			// Fastest time-constant is now 0.1 (10ms)

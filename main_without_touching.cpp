@@ -101,8 +101,8 @@ double EvaluationFunction(TVector<double> &v, RandomState &rs)
 				}
 
 				totaldist = (accdist/(RunDuration/StepSize));
-				fA = (MaxDist - totaldist)/MaxDist;
-				//fA = totaldist;
+				//fA = (MaxDist - totaldist)/MaxDist;
+				fA = totaldist;
 				fA = fA < 0 ? 0.0 : fA;
 				fitness += fA;
 			}
@@ -130,38 +130,38 @@ void ResultsDisplay(TSearch &s)
 	phenotype.SetBounds(1,VectSize);
 	// Save the genotype of the best individual
 	bestVector = s.BestIndividual();
-	//BestIndividualFile.open("best.gen.dat", fstream::app);
-	//BestIndividualFile << bestVector << endl;
-	//BestIndividualFile.close();
+	BestIndividualFile.open("best.gen.dat");
+	BestIndividualFile << bestVector << endl;
+	BestIndividualFile.close();
 	// Also show the best individual in the Circuit Model form
-	// BestIndividualFile.open("best.ns.dat", fstream::app);
+	BestIndividualFile.open("best.ns.dat");
 	GenPhenMapping(bestVector, phenotype);
 	WormAgent Worm(CircuitSize);
 	Worm.SetParameters(phenotype);
 	Worm.InitialiseAgent(StepSize);
-	// BestIndividualFile << Worm.NervousSystem;
-	// BestIndividualFile << endl;
-	// for (int i = 1; i <= CircuitSize; i++){
-	// 	p = Worm.onWeight(i);
-	// 	BestIndividualFile << p << " ";
-	// }
-	// BestIndividualFile << endl;
-	// for (int i = 1; i <= CircuitSize; i++){
-	// 	p = Worm.offWeight(i);
-	// 	BestIndividualFile << p << " ";
-	// }
-	// BestIndividualFile << endl;
-	// for (int i = 1; i <= CircuitSize; i++){
-	// 	p = Worm.cpgWeight(i);
-	// 	BestIndividualFile << p << " ";
-	// }
-	// BestIndividualFile << endl;
-	// BestIndividualFile << Worm.SensorN() << " " << endl;
-	// BestIndividualFile << Worm.SensorM() << " " << endl;
-	// BestIndividualFile << Worm.SensorD() << " " << endl;
-	// BestIndividualFile << Worm.OutputGain() << " " << endl;
-	// BestIndividualFile.close();
-	BestIndividualFile.open("quickgen.dat", fstream::app);
+	BestIndividualFile << Worm.NervousSystem;
+	BestIndividualFile << endl;
+	for (int i = 1; i <= CircuitSize; i++){
+		p = Worm.onWeight(i);
+		BestIndividualFile << p << " ";
+	}
+	BestIndividualFile << endl;
+	for (int i = 1; i <= CircuitSize; i++){
+		p = Worm.offWeight(i);
+		BestIndividualFile << p << " ";
+	}
+	BestIndividualFile << endl;
+	for (int i = 1; i <= CircuitSize; i++){
+		p = Worm.cpgWeight(i);
+		BestIndividualFile << p << " ";
+	}
+	BestIndividualFile << endl;
+	BestIndividualFile << Worm.SensorN() << " " << endl;
+	BestIndividualFile << Worm.SensorM() << " " << endl;
+	BestIndividualFile << Worm.SensorD() << " " << endl;
+	BestIndividualFile << Worm.OutputGain() << " " << endl;
+	BestIndividualFile.close();
+	BestIndividualFile.open("quickgen.dat");
 	BestIndividualFile << Worm.onWeight(1) << " " << Worm.offWeight(1) << " " << Worm.cpgWeight(1) << " " << Worm.NervousSystem.ConnectionWeight(1,1) << " " << Worm.NervousSystem.NeuronBias(1) << " " << Worm.SensorN() << " " << Worm.SensorM() << " " << Worm.SensorD() << " " << Worm.OutputGain() << endl;
 	BestIndividualFile.close();
 
@@ -174,42 +174,37 @@ void ResultsDisplay(TSearch &s)
 //#ifdef EVOLVE
 int main (int argc, const char* argv[])
 {
-	for (int iterations = 0; iterations < 100; iterations++){
-		long IDUM=-time(0)-iterations;
-		//cout << IDUM << " " << endl;
-		TSearch s(VectSize);
-		TVector<double> phenotype;
-		phenotype.SetBounds(1,VectSize);
+	long IDUM=-time(0);
+	TSearch s(VectSize);
+	TVector<double> phenotype;
+	phenotype.SetBounds(1,VectSize);
 
-		// redirect standard output to a file
-	#ifdef PRINTTOFILE
-		ofstream file;
-		file.open ("evol.dat");
-		cout.rdbuf(file.rdbuf());
-	#endif
+	// redirect standard output to a file
+#ifdef PRINTTOFILE
+	ofstream file;
+	file.open ("evol.dat");
+	cout.rdbuf(file.rdbuf());
+#endif
 
-		// Configure the search
-		s.SetRandomSeed(IDUM);
-		//cout << s.GetRandomSeed() << " " << endl;
-		s.SetPopulationStatisticsDisplayFunction(EvolutionaryRunDisplay);
-		s.SetSearchResultsDisplayFunction(ResultsDisplay);
-		s.SetSelectionMode(RANK_BASED);			//{FITNESS_PROPORTIONATE,RANK_BASED}
-		s.SetReproductionMode(HILL_CLIMBING);	// {HILL_CLIMBING, GENETIC_ALGORITHM}
-		s.SetPopulationSize(10);
-		s.SetMaxGenerations(100);
-		s.SetMutationVariance(0.05);
-		s.SetCrossoverProbability(0.5);
-		s.SetCrossoverMode(TWO_POINT);			//{UNIFORM, TWO_POINT}
-		s.SetMaxExpectedOffspring(1.1);
-		s.SetElitistFraction(0.0);				//Default is 0.0.
-		s.SetSearchConstraint(1);
-		s.SetCheckpointInterval(0);
-		s.SetReEvaluationFlag(1);				// CRUCIAL
+	// Configure the search
+	s.SetRandomSeed(IDUM);
+	s.SetPopulationStatisticsDisplayFunction(EvolutionaryRunDisplay);
+	s.SetSearchResultsDisplayFunction(ResultsDisplay);
+	s.SetSelectionMode(RANK_BASED);			//{FITNESS_PROPORTIONATE,RANK_BASED}
+	s.SetReproductionMode(HILL_CLIMBING);	// {HILL_CLIMBING, GENETIC_ALGORITHM}
+	s.SetPopulationSize(10);
+	s.SetMaxGenerations(100);
+	s.SetMutationVariance(0.05);
+	s.SetCrossoverProbability(0.5);
+	s.SetCrossoverMode(TWO_POINT);			//{UNIFORM, TWO_POINT}
+	s.SetMaxExpectedOffspring(1.1);
+	s.SetElitistFraction(0.0);				//Default is 0.0.
+	s.SetSearchConstraint(1);
+	s.SetCheckpointInterval(0);
+	s.SetReEvaluationFlag(1);				// CRUCIAL
 
-		s.SetEvaluationFunction(EvaluationFunction);
-		s.ExecuteSearch();
+	s.SetEvaluationFunction(EvaluationFunction);
+	s.ExecuteSearch();
 
-	}
 	return 0;
 }
-

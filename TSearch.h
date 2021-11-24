@@ -76,6 +76,7 @@ public:
 	int VectorSize(void) {return vectorSize;};
 	void SetVectorSize(int NewSize);
     void SetRandomSeed(long seed) {rs.SetRandomSeed(seed);};
+	long GetRandomSeed(void){return rs.seed;}
 	// Search Mode Accessors
 	TSelectionMode SelectionMode(void) {return SelectMode;};
 	void SetSelectionMode(TSelectionMode newmode) {SelectMode = newmode;};
